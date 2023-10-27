@@ -1,5 +1,4 @@
-﻿using BackEndProject.Interfaces;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
 namespace BackEndProject.Services;
 
@@ -17,8 +16,7 @@ public class EmployeeRepository : IEmployeeRepository
         connection.Open();
         string query = "INSERT INTO [dbo].[Employees] ([name], [Surname], [Email], [Login], [Password], [Role])" +
                                     "VALUES" +
-                                    $"({employee.Name}, {employee.Surname}, {employee.Email}, {employee.Login}, {employee.Password}, {(int)employee.Role})" +
-                                    "GO";
+                                    $"('{employee.Name}', '{employee.Surname}', '{employee.Email}', '{employee.Login}', {employee.Password}, {(int)employee.Role})";
         SqlCommand command = new SqlCommand(query, connection);
         return command.ExecuteNonQuery();
 
@@ -72,13 +70,14 @@ public class EmployeeRepository : IEmployeeRepository
     public Employee GetById(int id)
     {
         connection.Open();
-        string query = $"Select * from Employees where id={id}";
+        string query = $"Select * from Employees where id={id} and status<3";
 
         SqlCommand command = new SqlCommand(query, connection);
         using (SqlDataReader reader = command.ExecuteReader())
         {
-            while (reader.Read())
+            if (reader.Read())
             {
+                
                 Employee employee = new Employee();
                 employee.Id = int.Parse(reader[0].ToString());
                 employee.Name = reader[1].ToString();
@@ -100,11 +99,24 @@ public class EmployeeRepository : IEmployeeRepository
 
             }
         }
-        return new Employee();
+        return null;
     }
 
     public int Update(int id, Employee employee)
     {
-        throw new NotImplementedException();
+        connection.Open();
+        string query = $"Update Employees (" +
+                                    $"name = {employee.Name}, " +
+                                    $"surname = {employee.Surname}, " +
+                                    $"email = {employee.Email}, " +
+                                    $"login = {employee.Login}, " +
+                                    $"password = {employee.Password}, " +
+                                    $"role = {employee.Role}, " +
+                                    $"status = {employee.Status}, " +
+                                    $"modifydate = {employee.ModifyDate}) " +
+                                    $"where id={employee.Id} ";
+        SqlCommand command = new SqlCommand(query, connection);
+        return command.ExecuteNonQuery();
+
     }
 }

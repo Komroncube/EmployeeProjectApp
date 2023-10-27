@@ -1,4 +1,5 @@
-﻿using BackEndProject.Interfaces;
+﻿using BackEndProject.DTOs;
+using BackEndProject.Interfaces;
 using BackEndProject.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,22 +35,27 @@ public class EmployeeController : ControllerBase
 
     // POST api/<EmployeeController>
     [HttpPost]
-    public void Post([FromForm] EmployeeDto employeeDto)
+    public string Post([FromForm] EmployeeDto employeeDto)
     {
-        employeeService.CreateEmployee(employeeDto);
+        return employeeService.CreateEmployee(employeeDto);
     }
 
     // PUT api/<EmployeeController>/5
     [HttpPut("{id}")]
-    public void Put(int id, [FromForm] EmployeeDto employeeDto)
+    public string Put(int id, [FromForm] EmployeeDto employeeDto)
     {
-        employeeService.UpdateEmployee(id, employeeDto);
+        return employeeService.UpdateEmployee(id, employeeDto);
     }
 
     // DELETE api/<EmployeeController>/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
+    [HttpPatch("{id}")]
+    public string Delete(int id)
     {
-        employeeService.DeleteEmployee(id);
+        return employeeService.DeleteEmployee(id);
+    }
+    [HttpDelete("{id}")]
+    public string RootDelete(int id)
+    {
+        return employeeService.RootDeleteEmployee(id);
     }
 }

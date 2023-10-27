@@ -1,4 +1,6 @@
-﻿namespace BackEndProject.Interfaces;
+﻿using BackEndProject.DTOs;
+
+namespace BackEndProject.Interfaces;
 
 public interface IEmployeeService
 {
@@ -7,4 +9,5 @@ public interface IEmployeeService
     public string CreateEmployee(EmployeeDto employeeDto);
     public string UpdateEmployee(int id, EmployeeDto employeeDto);
     public string DeleteEmployee(int id);
+    public string RootDeleteEmployee(int id);
 }
