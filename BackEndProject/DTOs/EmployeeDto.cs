@@ -1,4 +1,4 @@
-﻿namespace BackEndProject.Models;
+﻿namespace BackEndProject.DTOs;
 
 public class EmployeeDto
 {
