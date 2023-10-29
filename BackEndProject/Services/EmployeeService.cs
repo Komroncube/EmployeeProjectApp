@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BackEndProject.DTOs;
-using BackEndProject.Interfaces;
 
 namespace BackEndProject.Services;
 
@@ -19,7 +18,7 @@ public class EmployeeService : IEmployeeService
     {
         var employee = _mapper.Map<Employee>(employeeDto);
         var res = dbContext.Create(employee);
-        if(res>0)
+        if (res > 0)
         {
             return "Employee created";
         }
@@ -29,14 +28,14 @@ public class EmployeeService : IEmployeeService
     public string DeleteEmployee(int id)
     {
         var employee = dbContext.GetById(id);
-        if(employee==null)
+        if (employee == null)
         {
             return "Employee not found";
         }
-        employee.Status=Status.Deleted;
-        employee.DeletedDate=DateTime.Now;
+        employee.Status = Status.Deleted;
+        employee.DeletedDate = DateTime.Now;
         var res = dbContext.Update(id, employee);
-        if(res>0) 
+        if (res > 0)
         {
             return "Employee deleted";
         }
@@ -59,7 +58,7 @@ public class EmployeeService : IEmployeeService
     public string RootDeleteEmployee(int id)
     {
         var res = dbContext.Delete(id);
-        if(res>0)
+        if (res > 0)
         {
             return "Employee deleted";
         }
@@ -74,10 +73,12 @@ public class EmployeeService : IEmployeeService
         var updateEmployee = _mapper.Map<Employee>(employee);
         updateEmployee.Id = employee.Id;
         updateEmployee.CreatedDate = employee.CreatedDate;
+
         updateEmployee.ModifyDate = DateTime.Now;
+
         updateEmployee.DeletedDate = employee.DeletedDate;
         var res = dbContext.Update(id, updateEmployee);
-        if(res>0)
+        if (res > 0)
         {
             return "Employee updated";
         }

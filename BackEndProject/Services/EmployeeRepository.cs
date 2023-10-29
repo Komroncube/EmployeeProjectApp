@@ -4,12 +4,14 @@ namespace BackEndProject.Services;
 
 public class EmployeeRepository : IEmployeeRepository
 {
+    private readonly DateTime defaultDatetime;
     private SqlConnection connection;
 
     public EmployeeRepository()
     {
         this.connection = new SqlConnection("Server=DOTNET-DEVELOPE;Database=EmployeeProject;Trusted_Connection=True;TrustServerCertificate=true;");
         connection.Open();
+        this.defaultDatetime = new DateTime(1753, 1, 1);
     }
 
     public int Create(Employee employee)
@@ -52,10 +54,10 @@ public class EmployeeRepository : IEmployeeRepository
                 employee.CreatedDate = DateTime.Parse(reader[8].ToString());
 
                 bool check = DateTime.TryParse(reader[9].ToString(), out DateTime nulldate);
-                employee.ModifyDate = nulldate;
+                employee.ModifyDate = nulldate==DateTime.MinValue ? defaultDatetime : nulldate;
 
                 check = DateTime.TryParse(reader[10].ToString(), out nulldate);
-                employee.DeletedDate = nulldate;
+                employee.DeletedDate = nulldate == DateTime.MinValue ? defaultDatetime : nulldate;
 
                 employees.Add(employee);
 
@@ -87,10 +89,10 @@ public class EmployeeRepository : IEmployeeRepository
                 employee.CreatedDate = DateTime.Parse(reader[8].ToString());
 
                 bool check = DateTime.TryParse(reader[9].ToString(), out DateTime nulldate);
-                employee.ModifyDate = nulldate;
+                employee.ModifyDate = nulldate == DateTime.MinValue ? defaultDatetime : nulldate;
 
                 check = DateTime.TryParse(reader[10].ToString(), out nulldate);
-                employee.DeletedDate = nulldate;
+                employee.DeletedDate = nulldate == DateTime.MinValue ? defaultDatetime : nulldate;
 
                 return employee;
 
@@ -101,17 +103,29 @@ public class EmployeeRepository : IEmployeeRepository
 
     public int Update(int id, Employee employee)
     {
-        string query = $"Update Employees set " +
-                                    $"name = {employee.Name}, " +
-                                    $"surname = {employee.Surname}, " +
-                                    $"email = {employee.Email}, " +
-                                    $"login = {employee.Login}, " +
-                                    $"password = {employee.Password}, " +
-                                    $"role = {employee.Role}, " +
-                                    $"status = {employee.Status}, " +
-                                    $"modifydate = {employee.ModifyDate} " +
-                                    $"where id={employee.Id} ";
+        string query = "UPDATE Employees SET " +
+                                "name = @Name, " +
+                                "surname = @Surname, " +
+                                "email = @Email, " +
+                                "login = @Login, " +
+                                "password = @Password, " +
+                                "role = @Role, " +
+                                "status = @Status, " +
+                                "modifydate = @ModifyDate," +
+                                "deleteddate = @DeletedDate " +
+                                "WHERE id = @Id";
+
         SqlCommand command = new SqlCommand(query, connection);
+        command.Parameters.AddWithValue("@Name", employee.Name);
+        command.Parameters.AddWithValue("@Surname", employee.Surname);
+        command.Parameters.AddWithValue("@Email", employee.Email);
+        command.Parameters.AddWithValue("@Login", employee.Login);
+        command.Parameters.AddWithValue("@Password", employee.Password);
+        command.Parameters.AddWithValue("@Role", (int)employee.Role);
+        command.Parameters.AddWithValue("@Status", (int)employee.Status);
+        command.Parameters.AddWithValue("@ModifyDate", employee.ModifyDate);
+        command.Parameters.AddWithValue("@DeletedDate", employee.DeletedDate);
+        command.Parameters.AddWithValue("@Id", employee.Id);
         return command.ExecuteNonQuery();
 
     }
