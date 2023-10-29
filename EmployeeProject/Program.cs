@@ -20,7 +20,7 @@ public class Program
 
         builder.Services.AddAutoMapper(typeof(ApplicationProfile));
         builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
-        builder.Services.AddTransient<IEmployeeService, EmployeeService>();
+        builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
 
         var app = builder.Build();
 

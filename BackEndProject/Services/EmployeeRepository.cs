@@ -9,14 +9,14 @@ public class EmployeeRepository : IEmployeeRepository
     public EmployeeRepository()
     {
         this.connection = new SqlConnection("Server=DOTNET-DEVELOPE;Database=EmployeeProject;Trusted_Connection=True;TrustServerCertificate=true;");
+        connection.Open();
     }
 
     public int Create(Employee employee)
     {
-        connection.Open();
         string query = "INSERT INTO [dbo].[Employees] ([name], [Surname], [Email], [Login], [Password], [Role])" +
                                     "VALUES" +
-                                    $"('{employee.Name}', '{employee.Surname}', '{employee.Email}', '{employee.Login}', {employee.Password}, {(int)employee.Role})";
+                                    $"('{employee.Name}', '{employee.Surname}', '{employee.Email}', '{employee.Login}', '{employee.Password}', {(int)employee.Role})";
         SqlCommand command = new SqlCommand(query, connection);
         return command.ExecuteNonQuery();
 
@@ -25,7 +25,6 @@ public class EmployeeRepository : IEmployeeRepository
 
     public int Delete(int id)
     {
-        connection.Open();
         string query = $"Delete from employees where id = {id}";
         SqlCommand command = new SqlCommand(query, connection);
         return command.ExecuteNonQuery();
@@ -33,7 +32,6 @@ public class EmployeeRepository : IEmployeeRepository
 
     public List<Employee> GetAll()
     {
-        connection.Open();
         List<Employee> employees = new List<Employee>();
         string query = "Select * from Employees";
 
@@ -69,7 +67,6 @@ public class EmployeeRepository : IEmployeeRepository
 
     public Employee GetById(int id)
     {
-        connection.Open();
         string query = $"Select * from Employees where id={id} and status<3";
 
         SqlCommand command = new SqlCommand(query, connection);
@@ -104,8 +101,7 @@ public class EmployeeRepository : IEmployeeRepository
 
     public int Update(int id, Employee employee)
     {
-        connection.Open();
-        string query = $"Update Employees (" +
+        string query = $"Update Employees set " +
                                     $"name = {employee.Name}, " +
                                     $"surname = {employee.Surname}, " +
                                     $"email = {employee.Email}, " +
@@ -113,7 +109,7 @@ public class EmployeeRepository : IEmployeeRepository
                                     $"password = {employee.Password}, " +
                                     $"role = {employee.Role}, " +
                                     $"status = {employee.Status}, " +
-                                    $"modifydate = {employee.ModifyDate}) " +
+                                    $"modifydate = {employee.ModifyDate} " +
                                     $"where id={employee.Id} ";
         SqlCommand command = new SqlCommand(query, connection);
         return command.ExecuteNonQuery();
