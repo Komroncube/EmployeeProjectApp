@@ -19,7 +19,14 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddAutoMapper(typeof(ApplicationProfile));
-        builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+
+        IConfiguration configuration = new ConfigurationBuilder()
+                                            .SetBasePath(Directory.GetCurrentDirectory())
+                                            .AddJsonFile("appsettings.json")
+                                            .Build();
+        string connectionString = configuration.GetConnectionString("EmployeeConnection");
+
+        builder.Services.AddTransient<IEmployeeRepository>(x=>new EmployeeRepository(connectionString));
         builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
 
         var app = builder.Build();

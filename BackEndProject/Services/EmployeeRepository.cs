@@ -7,9 +7,9 @@ public class EmployeeRepository : IEmployeeRepository
     private readonly DateTime defaultDatetime;
     private SqlConnection connection;
 
-    public EmployeeRepository()
+    public EmployeeRepository(string connectionString)
     {
-        this.connection = new SqlConnection("Server=DOTNET-DEVELOPE;Database=EmployeeProject;Trusted_Connection=True;TrustServerCertificate=true;");
+        this.connection = new SqlConnection(connectionString);
         connection.Open();
         this.defaultDatetime = new DateTime(1753, 1, 1);
     }

@@ -15,7 +15,7 @@ namespace EmployeeProject.Controllers
 
         public FruitController(IConfiguration configuration)
         {
-            this.connectionString = configuration.GetConnectionString("DefaultConnection");
+            this.connectionString = configuration.GetConnectionString("DapperConnection");
         }
         [HttpGet]
         public IActionResult GetAll()
@@ -32,9 +32,9 @@ namespace EmployeeProject.Controllers
         {
             using (var connection = new SqlConnection(connectionString))
             {
-                string query = "insert into fruits values(@name, @count, @price);";
-                connection.Execute(query, fruitDto);
-                return Ok("created");
+                string query = "insert into fruits values(@name, @count, @price); SELECT CAST(SCOPE_IDENTITY() as int)";
+                var res = connection.Query<int>(query, fruitDto);
+                return Ok(res);
             }
         }
         [HttpGet]
