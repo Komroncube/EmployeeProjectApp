@@ -56,6 +56,49 @@ namespace EmployeeProject.Controllers
                 return Ok(multiple);
             }
         }
+        [HttpGet]
+        public async ValueTask TestTaskAsync()
+        {
+            using(var connection = new SqlConnection(connectionString))
+            {
+                //executescalar query bajarib natijani 1-rowini qaytaradi, funksiyalarni chiqarish kerak
+                string query = "select avg(count) from fruits;";
+                //var avg = await connection.ExecuteScalarAsync<double>(query);
+                //avg = connection.ExecuteScalar<double>(query);
 
+
+                //execute update va delete funksiya uchun ishlatgan yaxshi
+                //query = "Update fruits set count = 9999 where id = @Id";
+                //var res = connection.Execute(query, new { Id = 3});
+                var res = await connection.ExecuteAsync(query, new { Id = 4 });
+
+                // QueryFirst = LINQ.first
+                var sql = "SELECT * FROM fruits WHERE Id = @Id";
+                var fruit = connection.QueryFirst<Fruit>(sql, new { Id = 1 });
+
+                // QuerySingle = LINQ.single
+                sql = "SELECT * FROM fruits WHERE Name = @Name";
+                fruit = connection.QuerySingle<Fruit>(sql, new { Name = "Anor" });
+
+                // Query
+                sql = "SELECT * FROM fruits WHERE name like '%n%'";
+                var fruits = connection.Query<Fruit>(sql);
+
+                sql = "Select * from fruits; Select * from vegetables;";
+                using(var multi = connection.QueryMultiple(sql))
+                {
+                    fruits = multi.Read<Fruit>();
+                    var vegetables = multi.ReadFirst<Vegetable>();
+                }
+
+                sql = "Select * from fruits where id = 4; Select * from vegetables where id>100;";
+                using (var multi = connection.QueryMultiple(sql))
+                {
+                    var singlefruit = await multi.ReadSingleAsync<Fruit>();
+                    var vegetables = multi.ReadSingleOrDefault<Vegetable>();
+                }
+
+            }
+        }
     }
 }
