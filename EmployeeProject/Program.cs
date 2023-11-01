@@ -24,10 +24,10 @@ public class Program
                                             .SetBasePath(Directory.GetCurrentDirectory())
                                             .AddJsonFile("appsettings.json")
                                             .Build();
-        string connectionString = configuration.GetConnectionString("EmployeeConnection");
 
-        builder.Services.AddTransient<IEmployeeRepository>(x=>new EmployeeRepository(connectionString));
+        builder.Services.AddTransient<IEmployeeRepository>(x=>new EmployeeRepository(configuration.GetConnectionString("EmployeeConnection")));
         builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
+        builder.Services.AddTransient(x => new StudentService(configuration.GetConnectionString("DapperConnection")));
 
         var app = builder.Build();
 
